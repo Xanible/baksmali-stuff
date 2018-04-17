@@ -20,14 +20,37 @@ import java.util.Set;
 public class Main {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		moveFromSubDirs("C:\\Users\\colby\\Desktop\\out");
+		File malDirS = new File("C:/Users/colby/Desktop/test/original/malware");
+		File benDirS = new File("C:/Users/colby/Desktop/test/original/benign");
+		File[] malSourceList = malDirS.listFiles();
+		File[] benSourceList = benDirS.listFiles();
 
-		combineToSingleFile("C:\\Users\\colby\\Desktop\\out", "C:\\Users\\colby\\Desktop\\output");
+		//Move all disassembly into source folders
+		for(File f: malSourceList) {
+			moveFromSubDirs(f.getPath());
+		}
+		for(File f: benSourceList) {
+			moveFromSubDirs(f.getPath());
+		}
 
-		cleanDisassembly("C:\\users\\colby\\Desktop\\output","C:\\users\\colby\\Desktop\\Cleaned\\a");
+		//Combine all files into single field
+		File comOutDirMal = new File("C:/Users/colby/Desktop/test/combined/malware");
+		File comOutDirBen = new File("C:/Users/colby/Desktop/test/combined/benign");
+		for(File f: malSourceList) {
+			combineToSingleFile(f.getPath(), comOutDirMal.getPath());
+		}
+		for(File f: benSourceList) {
+			combineToSingleFile(f.getPath(), comOutDirBen.getPath());
+		}
 
-		pairListCreator("C:/Users/colby/desktop/cleaned");
+		//Clean the Disassembly
+		File cleanOutDirMal = new File("C:/Users/colby/Desktop/test/cleaned/malware");
+		File cleanOutDirBen = new File("C:/Users/colby/Desktop/test/cleaned/benign");
+		cleanDisassembly(comOutDirMal.getPath(), cleanOutDirMal.getPath());
+		cleanDisassembly(comOutDirBen.getPath(), cleanOutDirBen.getPath());
+		
+		//Create the pair lists
+		pairListCreator("C:/Users/colby/desktop/test/cleaned");
 	}
 
 	/**
@@ -258,7 +281,7 @@ public class Main {
 			// Output pairs to file
 			BufferedWriter bw;
 			try {
-				bw = new BufferedWriter(new FileWriter("C:\\Users\\colby\\Desktop\\PL\\Pair" + stepSize + ".txt"));
+				bw = new BufferedWriter(new FileWriter("C:\\Users\\colby\\Desktop\\test\\Pair-Lists\\Pair" + stepSize + ".txt"));
 				for(String u: uniqueValues) {
 					bw.write(u);
 					bw.newLine();
