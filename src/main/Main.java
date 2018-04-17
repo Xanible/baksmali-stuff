@@ -1,8 +1,12 @@
 package main;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
@@ -53,8 +57,29 @@ public class Main {
 		File source = new File(s);
 		File[] files = source.listFiles();
 		
-		File outputFile = new File(output + File.separator + source.getName());
+		BufferedWriter outputFile = null;
+		try {
+			outputFile = new BufferedWriter(new FileWriter(output + File.separator + source.getName()));
+		} catch (IOException e) {
+			System.out.println("Error creating output file");
+			e.printStackTrace();
+		}
 		
+		for(File f: files) {
+			try {
+				BufferedReader input = new BufferedReader(new FileReader(f));
+				input
+			} catch (FileNotFoundException e) {
+				System.out.println("Error opening one of the source files");
+				e.printStackTrace();
+			}
+		}
 		
+		try {
+			outputFile.close();
+		} catch (IOException e) {
+			System.out.println("Error closing output file");
+			e.printStackTrace();
+		}
 	}
 }
