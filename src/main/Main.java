@@ -15,42 +15,100 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
+
+import org.apache.commons.io.FileUtils;
 
 public class Main {
 
-	public static void main(String[] args) {
-		File malDirS = new File("C:/Users/colby/Desktop/test/original/malware");
-		File benDirS = new File("C:/Users/colby/Desktop/test/original/benign");
-		File[] malSourceList = malDirS.listFiles();
-		File[] benSourceList = benDirS.listFiles();
+	public static void main(String[] args) throws IOException {
+		File sourceMal = new File("D:/Disassembly/original/malware");
+		File sourceBen = new File("D:/Disassembly/original/benign");
+		File outputBen = new File("C:\\Users\\ColbyAdmin\\Desktop\\Disassembly\\Original\\benign");
+		File outputMal = new File("C:\\Users\\ColbyAdmin\\Desktop\\Disassembly\\Original\\malware");
+		
+		File [] sourceBenFiles = sourceBen.listFiles();
+		File [] sourceMalFiles = sourceMal.listFiles();
+
+		ArrayList<File> benList = new ArrayList<File>(Arrays.asList(sourceBenFiles));
+		ArrayList<File> malList = new ArrayList<File>(Arrays.asList(sourceMalFiles));
+		
+		Random rand = new Random();
+		int count = 0;
+		/*
+		while(count < 1000) {
+				int  n = rand.nextInt(benList.size());
+				File f = benList.get(n);
+				benList.remove(f);
+				count++;
+				File output = new File(outputBen.toPath() + File.separator + f.getName());
+				FileUtils.copyDirectory(f, output);
+		}
+		
+		count = 0;
+		while(count < 1000) {
+			int  n = rand.nextInt(malList.size());
+			File f = malList.get(n);
+			malList.remove(f);
+			count++;
+			File output = new File(outputMal.toPath() + File.separator + f.getName());
+			FileUtils.copyDirectory(f, output);
+	}*/
+		
+		File[] malSourceList = outputMal.listFiles();
+		File[] benSourceList = outputBen.listFiles();
 
 		//Move all disassembly into source folders
+		System.out.println("MOVING");
+		
+		count = 0;
 		for(File f: malSourceList) {
 			moveFromSubDirs(f.getPath());
+			count++;
+			System.out.println(count);
 		}
+		count = 0;
 		for(File f: benSourceList) {
 			moveFromSubDirs(f.getPath());
+			count++;
+			System.out.println(count);
 		}
 
 		//Combine all files into single field
-		File comOutDirMal = new File("C:/Users/colby/Desktop/test/combined/malware");
-		File comOutDirBen = new File("C:/Users/colby/Desktop/test/combined/benign");
+		File comOutDirMal = new File("D:/Disassembly/combined/malware");
+		File comOutDirBen = new File("D:/Disassembly/combined/benign");
+		comOutDirMal.mkdirs();
+		comOutDirBen.mkdirs();
+		
+		System.out.println("COMBINING");
+		
+		count = 0;
 		for(File f: malSourceList) {
 			combineToSingleFile(f.getPath(), comOutDirMal.getPath());
-		}
+			count++;
+			System.out.println(count);
+		} 
+		count = 0;
 		for(File f: benSourceList) {
 			combineToSingleFile(f.getPath(), comOutDirBen.getPath());
+			count++;
+			System.out.println(count);
 		}
 
 		//Clean the Disassembly
-		File cleanOutDirMal = new File("C:/Users/colby/Desktop/test/cleaned/malware");
-		File cleanOutDirBen = new File("C:/Users/colby/Desktop/test/cleaned/benign");
+		File cleanOutDirMal = new File("D:/Disassembly/cleaned/malware");
+		File cleanOutDirBen = new File("D:/Disassembly/cleaned/benign");
+		cleanOutDirMal.mkdirs();
+		cleanOutDirBen.mkdirs();
+		
+		System.out.println("CLEANING");
 		cleanDisassembly(comOutDirMal.getPath(), cleanOutDirMal.getPath());
 		cleanDisassembly(comOutDirBen.getPath(), cleanOutDirBen.getPath());
 		
 		//Create the pair lists
-		pairListCreator("C:/Users/colby/desktop/test/cleaned");
+		System.out.println("PAIRING");
+		pairListCreator("D:/Disassembly/cleaned");
 	}
 
 	/**
@@ -143,19 +201,20 @@ public class Main {
 		List<String> dictionary = new ArrayList<String>();
 		List<String> NID = new ArrayList<String>();
 		try {
-			br = new BufferedReader(new FileReader("C:/Users/colby/Desktop/school/ADCT/Dalvik_Dictionary_Sorted.txt"));
+			br = new BufferedReader(new FileReader("C:/Users/colbyadmin/Desktop/school/AndroidCT/Dalvik_Dictionary_Sorted.txt"));
 			String line = br.readLine();
 			while(line != null) {
 				dictionary.add(line);
 				line = br.readLine();
 			}
-			notInDiction = new BufferedWriter(new FileWriter("C:/Users/colby/Desktop/school/ADCT/NotInDictionary.txt"));
+			notInDiction = new BufferedWriter(new FileWriter("C:/Users/colbyadmin/Desktop/school/AndroidCT/NotInDictionary.txt"));
 			br.close();
 		} catch (IOException e) {
 			System.out.println("Error opening dictionary file");
 			e.printStackTrace();
 		}
 
+		int count = 0;
 		for(File f: fileList) {
 			BufferedWriter output = null;
 			try {
@@ -185,6 +244,8 @@ public class Main {
 				System.out.println("Error closing output file");
 				e.printStackTrace();
 			}
+			count++;
+			System.out.println(count);
 		}
 		for(String n: NID) {
 			try {
@@ -281,7 +342,7 @@ public class Main {
 			// Output pairs to file
 			BufferedWriter bw;
 			try {
-				bw = new BufferedWriter(new FileWriter("C:\\Users\\colby\\Desktop\\test\\Pair-Lists\\Pair" + stepSize + ".txt"));
+				bw = new BufferedWriter(new FileWriter("D:/Pair-Lists/Pair" + stepSize + ".txt"));
 				for(String u: uniqueValues) {
 					bw.write(u);
 					bw.newLine();
