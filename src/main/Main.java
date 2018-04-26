@@ -25,8 +25,10 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		File sourceMal = new File("D:/Disassembly/original/malware");
 		File sourceBen = new File("D:/Disassembly/original/benign");
-		File outputBen = new File("C:\\Users\\ColbyAdmin\\Desktop\\Disassembly\\Original\\benign");
-		File outputMal = new File("C:\\Users\\ColbyAdmin\\Desktop\\Disassembly\\Original\\malware");
+		File outputBen = new File("C:\\Users\\ColbyAdmin\\Desktop\\Disassembly\\benign");
+		File outputMal = new File("C:\\Users\\ColbyAdmin\\Desktop\\Disassembly\\malware");
+		outputBen.mkdirs();
+		outputMal.mkdirs();
 		
 		File [] sourceBenFiles = sourceBen.listFiles();
 		File [] sourceMalFiles = sourceMal.listFiles();
@@ -37,24 +39,24 @@ public class Main {
 		Random rand = new Random();
 		int count = 0;
 		/*
-		while(count < 1000) {
+		while(count < 2000) {
 				int  n = rand.nextInt(benList.size());
 				File f = benList.get(n);
 				benList.remove(f);
 				count++;
 				File output = new File(outputBen.toPath() + File.separator + f.getName());
 				FileUtils.copyDirectory(f, output);
-		}
+		}*/
 		
 		count = 0;
-		while(count < 1000) {
+		while(count < 2000) {
 			int  n = rand.nextInt(malList.size());
 			File f = malList.get(n);
 			malList.remove(f);
 			count++;
 			File output = new File(outputMal.toPath() + File.separator + f.getName());
 			FileUtils.copyDirectory(f, output);
-	}*/
+	}
 		
 		File[] malSourceList = outputMal.listFiles();
 		File[] benSourceList = outputBen.listFiles();
@@ -67,13 +69,13 @@ public class Main {
 			moveFromSubDirs(f.getPath());
 			count++;
 			System.out.println(count);
-		}
+		} 
 		count = 0;
 		for(File f: benSourceList) {
 			moveFromSubDirs(f.getPath());
 			count++;
 			System.out.println(count);
-		}
+		} 
 
 		//Combine all files into single field
 		File comOutDirMal = new File("D:/Disassembly/combined/malware");
@@ -89,6 +91,7 @@ public class Main {
 			count++;
 			System.out.println(count);
 		} 
+		
 		count = 0;
 		for(File f: benSourceList) {
 			combineToSingleFile(f.getPath(), comOutDirBen.getPath());
@@ -160,6 +163,10 @@ public class Main {
 
 		BufferedWriter outputFile = null;
 		try {
+			File test = new File(output + File.separator + source.getName() + ".txt");
+			if(test.exists()) {
+				return;
+			}
 			outputFile = new BufferedWriter(new FileWriter(output + File.separator + source.getName() + ".txt"));
 		} catch (IOException e) {
 			System.out.println("Error creating output file");
